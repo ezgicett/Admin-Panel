@@ -125,6 +125,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'accept': '*/*',
+      //'Access-Control-Allow-Origin': "*",
     };
 
     var response = await http.post(

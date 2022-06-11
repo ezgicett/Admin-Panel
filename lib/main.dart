@@ -6,6 +6,7 @@ import 'package:bitirme_admin_panel/screens/developer_screen_operations.dart';
 import 'package:bitirme_admin_panel/screens/home_screen.dart';
 import 'package:bitirme_admin_panel/screens/login_screen.dart';
 import 'package:bitirme_admin_panel/screens/menu_screen.dart';
+import 'package:bitirme_admin_panel/screens/navbar_screen.dart';
 import 'package:bitirme_admin_panel/screens/welcome_screen.dart';
 import 'package:bitirme_admin_panel/screens/welcome_screen_operations.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
         WelcomeScreenOperations.id: (context) => WelcomeScreenOperations(),
         DeveloperScreenOperations.id: (context) => DeveloperScreenOperations(),
         MenuScreen.id: (context) => MenuScreen(),
-        CarouselScreenOperations.id: (context) => CarouselScreenOperations()
+        CarouselScreenOperations.id: (context) => CarouselScreenOperations(),
+        NavbarScreen.id: (context) => NavbarScreen()
       },
     );
   }
