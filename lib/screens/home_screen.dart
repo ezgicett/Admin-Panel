@@ -4,7 +4,6 @@ import 'package:bitirme_admin_panel/screens/carousel_screen_operations.dart';
 import 'package:bitirme_admin_panel/screens/dashboard_screen.dart';
 import 'package:bitirme_admin_panel/screens/developer_screen.dart';
 import 'package:bitirme_admin_panel/screens/developer_screen_operations.dart';
-import 'package:bitirme_admin_panel/screens/menu_screen.dart';
 import 'package:bitirme_admin_panel/screens/navbar_screen.dart';
 import 'package:bitirme_admin_panel/screens/welcome_screen_operations.dart';
 import 'package:flutter/material.dart';
@@ -58,11 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
           widget.selectedScreen = DeveloperScreenOperations();
         });
         break;
-      case MenuScreen.id:
-        setState(() {
-          widget.selectedScreen = MenuScreen();
-        });
-        break;
       case CarouselScreenOperations.id:
         setState(() {
           widget.selectedScreen = CarouselScreenOperations();
@@ -114,11 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
           AdminMenuItem(
             title: 'Developer Operations Screen',
             route: DeveloperScreenOperations.id,
-            icon: Icons.dashboard,
-          ),
-          AdminMenuItem(
-            title: 'Menu Screen',
-            route: MenuScreen.id,
             icon: Icons.dashboard,
           ),
           AdminMenuItem(
