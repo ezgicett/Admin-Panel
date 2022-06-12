@@ -67,7 +67,7 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
   }
 
   Widget buildDataTable() {
-    final columns = ['Id', 'Slogan', 'Image', '#', '-'];
+    final columns = ['Id', 'Slogan', 'Image', '-'];
 
     return DataTable(
       columns: getColumns(columns),
@@ -80,7 +80,8 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
       final isAge = column == columns[2];
 
       return DataColumn(
-        label: Text(column),
+        label: Container(width: 50, child: Expanded(child: Text(column))),
+        //label: Text(column),
         numeric: isAge,
       );
     }).toList();
@@ -89,15 +90,10 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
   List<DataRow> getRows(List<WelcomePage> users) =>
       users.map((WelcomePage page) {
         Icon deleteIcon = Icon(Icons.delete);
-
-        final cells = [
-          page.id,
-          page.slogan,
-          page.welcomePageImage,
-          "#",
-          deleteIcon
-        ];
+        int length = 20;
+        final cells = [page.id, page.slogan, page.welcomePageImage, deleteIcon];
         return DataRow(
+          //Container(width: 100, child: Expanded(child: Text('$cell'))),
           cells: Utils.modelBuilder(cells, (index, cell) {
             final showEditIcon = index == 1 || index == 3;
             if (cell.runtimeType == Icon) {

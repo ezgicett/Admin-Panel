@@ -49,17 +49,9 @@ class _DeveloperScreenState extends State<DeveloperScreen> {
                     ),
                   ),
                   Expanded(
+                    child: Container(),
                     flex: 1,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.edit,
-                      ),
-                      iconSize: 25,
-                      color: Colors.green,
-                      splashColor: Colors.purple,
-                      onPressed: () {},
-                    ),
-                  ),
+                  )
                 ],
               ),
             ),
@@ -80,17 +72,9 @@ class _DeveloperScreenState extends State<DeveloperScreen> {
                     ),
                   ),
                   Expanded(
+                    child: Container(),
                     flex: 1,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.edit,
-                      ),
-                      iconSize: 25,
-                      color: Colors.green,
-                      splashColor: Colors.purple,
-                      onPressed: () {},
-                    ),
-                  ),
+                  )
                 ],
               ),
             ),
@@ -188,11 +172,10 @@ class _DeveloperScreenState extends State<DeveloperScreen> {
     };
     print(PickImage(flag: true).getBase64.length);
     Developer developer = Developer(
-      developerName: nameController.text.toString(),
-      developerImage: PickImage(flag: true).getBase64,
-      developerSpecializedField: specializedFieldController.text.toString(),
-      createSocialMediaRequests: listOfSocialMediaAccounts,
-    ); // [
+        developerName: nameController.text.toString(),
+        developerImage: PickImage(flag: true).getBase64,
+        developerSpecializedField: specializedFieldController.text.toString(),
+        createSocialMediaRequests: listOfSocialMediaAccounts); // [
     //   CreateSocialMediaRequest(
     //     link: "",
     //     developerId: 17,

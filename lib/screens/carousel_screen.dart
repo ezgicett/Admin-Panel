@@ -86,17 +86,9 @@ class _CarouselScreenState extends State<CarouselScreen> {
                   ),
                 ),
                 Expanded(
+                  child: Container(),
                   flex: 1,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.edit,
-                    ),
-                    iconSize: 25,
-                    color: Colors.green,
-                    splashColor: Colors.purple,
-                    onPressed: () {},
-                  ),
-                ),
+                )
               ],
             ),
             const SizedBox(
@@ -117,17 +109,9 @@ class _CarouselScreenState extends State<CarouselScreen> {
                   ),
                 ),
                 Expanded(
+                  child: Container(),
                   flex: 1,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.edit,
-                    ),
-                    iconSize: 25,
-                    color: Colors.green,
-                    splashColor: Colors.purple,
-                    onPressed: () {},
-                  ),
-                ),
+                )
               ],
             ),
             const SizedBox(

@@ -17,12 +17,12 @@ class Menu {
 
     int? id;
     int? version;
-    List<MenuItem>? menuItems;
+    List<MenuuItem>? menuItems;
 
     factory Menu.fromJson(Map<String, dynamic> json) => Menu(
         id: json["id"],
         version: json["version"],
-        menuItems: List<MenuItem>.from(json["menuItems"].map((x) => MenuItem.fromJson(x))),
+        menuItems: List<MenuuItem>.from(json["menuItems"].map((x) => MenuuItem.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -32,8 +32,8 @@ class Menu {
     };
 }
 
-class MenuItem {
-    MenuItem({
+class MenuuItem {
+    MenuuItem({
         this.id,
         this.menuName,
     });
@@ -41,7 +41,7 @@ class MenuItem {
     int? id;
     String? menuName;
 
-    factory MenuItem.fromJson(Map<String, dynamic> json) => MenuItem(
+    factory MenuuItem.fromJson(Map<String, dynamic> json) => MenuuItem(
         id: json["id"],
         menuName: json["menuName"],
     );

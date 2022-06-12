@@ -57,17 +57,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
                 Expanded(
+                  child: Container(),
                   flex: 1,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.edit,
-                    ),
-                    iconSize: 25,
-                    color: Colors.green,
-                    splashColor: Colors.purple,
-                    onPressed: () {},
-                  ),
-                ),
+                )
               ],
             ),
             const SizedBox(
@@ -86,11 +78,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: isUpdate == false
                     ? const Text("Create")
                     : const Text("Update")),
-            ElevatedButton(
-                onPressed: () async {
-                  await fetchPages();
-                },
-                child: const Text("Get")),
+
             // ElevatedButton(
             //     onPressed: () {
             //       debugPrint(widget.selectedPage!.id.toString());
@@ -113,7 +101,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       headers: requestHeaders,
       body: json.encode({
         'slogan': sloganController.text.toString(),
-        'welcomePageImage': "urll",
+        'welcomePageImage': PickImage(flag: true).getBase64,
       }),
     );
     var result = welcomePageFromJson(response.body);

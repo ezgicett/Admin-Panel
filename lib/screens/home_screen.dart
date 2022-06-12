@@ -27,12 +27,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   currentScreen(item) {
     switch (item.route) {
-      case DashboardScreen.id:
-        setState(() {
-          widget.selectedScreen = DashboardScreen();
-        });
-        break;
-
       case DeveloperScreen.id:
         setState(() {
           widget.selectedScreen = DeveloperScreen();
@@ -83,19 +77,16 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
             onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => LoginScreen()));
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => LoginScreen()),
+                  (route) => false);
             },
           ),
         ],
       ),
       sideBar: SideBar(
         items: const [
-          AdminMenuItem(
-            title: 'Dashboard',
-            route: DashboardScreen.id,
-            icon: Icons.dashboard,
-          ),
           AdminMenuItem(
             title: 'Developer Screen',
             route: DeveloperScreen.id,

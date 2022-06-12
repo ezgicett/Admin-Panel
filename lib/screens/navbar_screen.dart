@@ -33,7 +33,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
   Menu? dropdownvalue;
   Menu? dropdownvalueNavbar;
 
-  late List<Menu> menus;
+  List<Menu> menus = [];
   @override
   void initState() {
     super.initState();
@@ -146,12 +146,12 @@ class _NavbarScreenState extends State<NavbarScreen> {
               ],
             ),
             const SizedBox(
-              height: 20,
+              height: 50,
             ),
             Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 5,
                   child: TextFormField(
                     controller: versionNavbar,
                     decoration: const InputDecoration(
@@ -162,12 +162,16 @@ class _NavbarScreenState extends State<NavbarScreen> {
                             borderSide: BorderSide(color: Colors.blue))),
                   ),
                 ),
+                Expanded(
+                  child: Container(),
+                  flex: 1,
+                )
               ],
             ),
             Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 5,
                   child: TextFormField(
                     controller: title,
                     decoration: const InputDecoration(
@@ -178,6 +182,10 @@ class _NavbarScreenState extends State<NavbarScreen> {
                             borderSide: BorderSide(color: Colors.blue))),
                   ),
                 ),
+                Expanded(
+                  child: Container(),
+                  flex: 1,
+                )
               ],
             ),
             PickImage(flag: false),
@@ -190,7 +198,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
                 },
                 child: const Text("Create Navbar Content")),
             const SizedBox(
-              height: 30,
+              height: 50,
             ),
             Row(
               children: [
@@ -211,17 +219,18 @@ class _NavbarScreenState extends State<NavbarScreen> {
                     });
                   },
                   items: menus.map<DropdownMenuItem<Menu>>((Menu value) {
+                    //var ids = value.menuItems!.first.id ?? '';
                     return DropdownMenuItem<Menu>(
                       value: value,
                       child: Text("Id: " +
                               value.id.toString() +
                               ' ' +
                               "Version: " +
-                              value.version.toString() //+
+                              value.version.toString() +
+                              ' '
+                          //ids.toString()
                           // ' ' +
-                          // value.menuItems![0].id.toString() +
-                          // ' ' +
-                          // value.menuItems![0].menuName.toString(),
+                          // value.menuItems!.first.menuName.toString(),
                           ),
                     );
                   }).toList(),
@@ -254,8 +263,11 @@ class _NavbarScreenState extends State<NavbarScreen> {
     var response = await http.post(
       Uri.parse("https://aifitness-web.herokuapp.com/navbar/addMenu"),
       headers: requestHeaders,
-      body: json.encode({'version': 0}),
+      body: json.encode({'version': int.parse(version.text)}),
     );
+    setState(() {
+      fetchMenus();
+    });
     //var result = json.decode(response.body);
     //print(result);
   }
@@ -269,9 +281,10 @@ class _NavbarScreenState extends State<NavbarScreen> {
     var response = await http.post(
       Uri.parse("https://aifitness-web.herokuapp.com/navbar/createMenuItem"),
       headers: requestHeaders,
-      body:
-          json.encode(MenuItem(id: dropdownvalue!.id, menuName: menuName.text)),
+      body: json
+          .encode(MenuuItem(id: dropdownvalue!.id, menuName: menuName.text)),
     );
+    print(menuName.text);
     //var result = json.decode(response.body);
     print(response.statusCode.toString());
   }

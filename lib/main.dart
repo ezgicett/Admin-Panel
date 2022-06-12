@@ -25,11 +25,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: LoginScreen.id,
+      home: LoginScreen(),
       routes: {
         LoginScreen.id: (context) => LoginScreen(),
         HomeScreen.id: (context) => HomeScreen(),
-        DashboardScreen.id: (context) => DashboardScreen(),
         DeveloperScreen.id: (context) => DeveloperScreen(),
         WelcomeScreen.id: (context) => WelcomeScreen(),
         CarouselScreen.id: (context) => CarouselScreen(),

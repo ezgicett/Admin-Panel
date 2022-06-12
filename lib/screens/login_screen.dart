@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:bitirme_admin_panel/models/developer.dart';
 import 'package:bitirme_admin_panel/models/login.dart';
 import 'package:bitirme_admin_panel/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -34,113 +33,127 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Login Page"),
+        title: const Text("Login Page"),
       ),
-      body: SingleChildScrollView(
-        // centera al
-        child: Form(
-          autovalidateMode:
-              AutovalidateMode.always, //check for validation while typing
-          key: formkey,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: TextFormField(
-                    controller: username,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Username',
-                        hintText: 'Enter valid username'),
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: "* Required"),
-                      //EmailValidator(errorText: "Enter valid email id"),
-                    ])),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 15.0, right: 15.0, top: 15, bottom: 0),
-                child: TextFormField(
-                    controller: password,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Password',
-                        hintText: 'Enter secure password'),
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: "* Required"),
-                      MinLengthValidator(6,
-                          errorText: "Password should be atleast 6 characters"),
-                      MaxLengthValidator(15,
-                          errorText:
-                              "Password should not be greater than 15 characters")
-                    ])
-                    //validatePassword,        //Function to check validation
-                    ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                height: 30,
-                width: 250,
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(20)),
-                child: ElevatedButton(
-                  onPressed: () {
-                    //login();
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => HomeScreen()));
-
-                    // if (formkey.currentState!.validate()) {
-                    //   Navigator.push(context,
-                    //       MaterialPageRoute(builder: (_) => HomeScreen()));
-                    //   print("Validated");
-                    // } else {
-                    //   print("Not Validated");
-                    // }
-                  },
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(color: Colors.white, fontSize: 25),
+      body: Center(
+        child: SingleChildScrollView(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.50,
+            child: Form(
+              autovalidateMode:
+                  AutovalidateMode.always, //check for validation while typing
+              key: formkey,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: TextFormField(
+                        controller: username,
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Username',
+                            hintText: 'Enter valid username'),
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: "* Required"),
+                          //EmailValidator(errorText: "Enter valid email id"),
+                        ])),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 15.0, top: 15, bottom: 0),
+                    child: TextFormField(
+                        controller: password,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Password',
+                            hintText: 'Enter secure password'),
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: "* Required"),
+                          MinLengthValidator(6,
+                              errorText:
+                                  "Password should be atleast 6 characters"),
+                          MaxLengthValidator(15,
+                              errorText:
+                                  "Password should not be greater than 15 characters")
+                        ])),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    height: 30,
+                    width: 250,
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        //login();
+                        bool value = await login();
+                        print(value);
+                        if (value) {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => HomeScreen()));
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Login Failed'),
+                              content:
+                                  const Text('Username or Password s Wrong!'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Okey'),
+                                  child: const Text('Okey'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 100,
+                  ),
+                ],
               ),
-              const SizedBox(
-                height: 100,
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  login() async {
+  Future<bool> login() async {
     Login login = Login(
         username: username.text.toString(), password: password.text.toString());
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'accept': '*/*',
     };
-    print(username.text.toString());
-    print(password.text.toString());
+
     var response = await http.post(
         Uri.parse("https://aifitness-api.herokuapp.com/auth/login"),
         headers: requestHeaders,
-        body: jsonEncode(login.toJson()));
+        body: jsonEncode(login));
+    if (response.statusCode == 200) {
+      var result = loginFromJson(response.body);
 
-    var result = loginFromJson(response.body);
-    validate(result.data);
-    print(result.data!.token.toString());
-    print(response.statusCode.toString());
-  }
-
-  validate(data) {
-    if (data.token.toString().length >= 20 && data.userType == "admin") {
-      print("User login succesfull");
-      Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+      if (result.data!.token.toString().length >= 20 &&
+          result.data!.userType == "admin") {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
     }
   }
 }

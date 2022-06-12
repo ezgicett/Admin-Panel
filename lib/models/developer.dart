@@ -10,11 +10,11 @@ String developerToJson(Developer data) => json.encode(data.toJson());
 
 class Developer {
   Developer({
-    this.developerName,
-    this.developerImage,
-    this.developerSpecializedField,
-    this.createSocialMediaRequests,
     this.id,
+    this.developerName,
+    this.developerSpecializedField,
+    this.developerImage,
+    this.createSocialMediaRequests,
   });
 
   String? developerName;
@@ -23,15 +23,21 @@ class Developer {
   List<CreateSocialMediaRequest>? createSocialMediaRequests;
   int? id;
 
-  factory Developer.fromJson(Map<String, dynamic> json) => Developer(
-        developerName: json["developerName"],
-        developerImage: json["developerImage"],
-        developerSpecializedField: json["developerSpecializedField"],
-        id: json["id"],
-        createSocialMediaRequests: List<CreateSocialMediaRequest>.from(
-            json["createSocialMediaRequests"]
-                .map((x) => CreateSocialMediaRequest.fromJson(x))),
-      );
+  factory Developer.fromJson(Map<String, dynamic> json) {
+    print(json["socialMedia"].toString());
+    print(json["socialMedia"][0].toString());
+
+    return Developer(
+      id: json["id"],
+      developerName: json["developerName"],
+      developerSpecializedField: json["developerSpecializedField"],
+      developerImage: json["developerImage"],
+      createSocialMediaRequests: List<CreateSocialMediaRequest>.from(
+          json["socialMedia"]
+              .map((x) => CreateSocialMediaRequest.fromJson(x))
+              .toList()),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "developerName": developerName,
@@ -44,20 +50,27 @@ class Developer {
 
 class CreateSocialMediaRequest {
   CreateSocialMediaRequest({
+    this.id,
     this.link,
     this.developerId,
     this.socialMedia,
+    this.developerSpecializedField,
+    this.socialMediaImageLink,
   });
 
+  int? id;
   String? link;
   int? developerId;
   String? socialMedia;
+  int? developerSpecializedField;
+  String? socialMediaImageLink;
 
   factory CreateSocialMediaRequest.fromJson(Map<String, dynamic> json) =>
       CreateSocialMediaRequest(
+        id: json["id"],
         link: json["link"],
-        developerId: json["developerId"],
-        socialMedia: json["socialMedia"],
+        developerSpecializedField: json["developerSpecializedField"],
+        socialMediaImageLink: json["socialMediaImageLink"],
       );
 
   Map<String, dynamic> toJson() => {

@@ -33,16 +33,18 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
   List<Developer> list = [];
 
   TextEditingController sloganController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     fetchDevelopers();
+    //print(list);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<List<Developer>>(
         future: fetchDevelopers(),
         builder: (contex, snapshot) {
           if (snapshot.hasData) {
@@ -52,7 +54,7 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
                   Center(
                     child: Column(
                       children: <Widget>[
-                        //ScrollableWidget(child: buildDataTable()),
+                        ScrollableWidget(child: buildDataTable(snapshot.data!)),
                       ],
                     ),
                   ),
@@ -60,28 +62,31 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
               ),
             );
           }
+          print("Data buluanmadı ${snapshot.error.toString()}");
           return Center(
             child: CircularProgressIndicator(),
           );
         });
   }
 
-  Widget buildDataTable() {
+  Widget buildDataTable(List<Developer> listDeveloper) {
     final columns = [
       'Id',
       'Name',
       'Specialized Field',
-      'Image',
+      //'Image',
       'Gmail',
       'Linkedin',
       'Tweeter',
-      '#',
       '-'
     ];
 
-    return DataTable(
-      columns: getColumns(columns),
-      rows: getRows(list),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        columns: getColumns(columns),
+        rows: getRows(listDeveloper),
+      ),
     );
   }
 
@@ -90,42 +95,66 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
       final isAge = column == columns[2];
 
       return DataColumn(
-        label: Text(column),
+        label: Container(width: 100, child: Expanded(child: Text(column))),
         numeric: isAge,
       );
     }).toList();
   }
 
-  List<DataRow> getRows(List<Developer> users) => users.map((Developer page) {
+  List<DataRow> getRows(List<Developer> developers) =>
+      developers.map((Developer developer) {
+        //print(page.createSocialMediaRequests![0].link);
+        int listLength = (developer.createSocialMediaRequests?.length ?? 0);
+        print(listLength);
         Icon deleteIcon = Icon(Icons.delete);
         final cells = [
-          page.id,
-          page.developerName,
-          page.developerSpecializedField,
-          page.developerImage,
-          page.createSocialMediaRequests![0],
-          page.createSocialMediaRequests![1],
-          page.createSocialMediaRequests![2],
-          "#",
+          developer.id,
+          developer.developerName,
+          developer.developerSpecializedField,
+          //developer.developerImage,
+          listLength > 0
+              ? (developer.createSocialMediaRequests?[0].link ?? "")
+              : "",
+          listLength > 1
+              ? (developer.createSocialMediaRequests?[1].link ?? "")
+              : "",
+          listLength > 2
+              ? (developer.createSocialMediaRequests?[2].link ?? "")
+              : "",
           deleteIcon
         ];
 
         return DataRow(
           cells: Utils.modelBuilder(cells, (index, cell) {
-            final showEditIcon = index == 0 || index == 3;
+            final showEditIcon = index == 1 ||
+                index == 2 ||
+                index == 3 ||
+                index == 4 ||
+                index == 5;
             if (cell.runtimeType == Icon) {
-              return DataCell(Icon(Icons.delete), onTap: () {});
+              return DataCell(Icon(Icons.delete), onTap: () {
+                deleteDeveloper(developer);
+              });
             } else {
               return DataCell(
-                Text('$cell'),
+                Container(width: 100, child: Expanded(child: Text('$cell'))),
                 showEditIcon: showEditIcon,
                 onTap: () {
                   switch (index) {
-                    case 0:
-                      editFirstName(page);
+                    case 1:
+                      editName(developer);
+                      break;
+                    case 2:
+                      editField(developer);
                       break;
                     case 3:
-                      editLastName(page);
+                      editGmail(developer);
+                      break;
+                    case 4:
+                      editLastName(developer);
+                      break;
+                    case 5:
+                      editLastName(developer);
                       break;
                   }
                 },
@@ -135,12 +164,64 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
         );
       }).toList();
 
-  Future editFirstName(Developer page) async {
-    // final firstName = await showTextDialog(
-    //   context,
-    //   slogan: 'Change Id',
-    //   slogan_value: page.id.toString(),
-    // );
+  Future editName(Developer developer) async {
+    final name = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Update Name"),
+        content: TextField(
+          controller: nameController,
+          decoration: InputDecoration(hintText: 'Enter name'),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                updateName(developer, nameController.text);
+              },
+              child: const Text('SUBMIT')),
+        ],
+      ),
+    );
+  }
+
+  Future editField(Developer developer) async {
+    final name = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Update Field"),
+        content: TextField(
+          controller: nameController,
+          decoration: InputDecoration(hintText: 'Enter field'),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                updateSpecializedField(developer, nameController.text);
+              },
+              child: Text('SUBMIT')),
+        ],
+      ),
+    );
+  }
+
+  Future editGmail(Developer developer) async {
+    final name = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Update Social Media"),
+        content: TextField(
+          controller: nameController,
+          decoration: InputDecoration(hintText: 'Enter link'),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                updateGmail(developer, nameController.text);
+              },
+              child: Text('SUBMIT')),
+        ],
+      ),
+    );
   }
 
   Future editLastName(Developer selectedPage) async {
@@ -148,54 +229,117 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
         builder: (context) => HomeScreen(
               selectedScreen: WelcomeScreen(),
             )));
-    // Navigator.of(context).pushNamed(WelcomeScreen.id);
-    //Navigator.push(context, );
+  }
+
+  updateName(Developer developer, String name) async {
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'accept': '*/*',
+    };
+    Developer dev = Developer(
+        developerName: name,
+        developerImage: developer.developerImage,
+        developerSpecializedField: developer.developerSpecializedField,
+        createSocialMediaRequests: developer.createSocialMediaRequests);
+    var response = await http.post(
+      Uri.parse(
+          "https://aifitness-web.herokuapp.com/developer/updateDeveloperName?developerId=${developer.id.toString()}"),
+      headers: requestHeaders,
+      body: json.encode(dev),
+    );
+    if (response.statusCode == 200) {
+      print("Updated Successfully");
+      nameController.clear();
+      Navigator.of(context).pop();
+    }
+  }
+
+  updateGmail(Developer developer, String name) async {
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'accept': '*/*',
+    };
+    final index = developer.createSocialMediaRequests!
+        .indexWhere((element) => element.socialMedia == "LINKEDIN");
+
+    print(index.toString() + "----");
+
+    var response = await http.post(
+      Uri.parse(
+          "https://aifitness-web.herokuapp.com/developer/updateSocialMedia"),
+      headers: requestHeaders,
+      body: json.encode({
+        "id": developer.createSocialMediaRequests![index].developerId,
+        "link": name,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print("Updated Successfully");
+      nameController.clear();
+      Navigator.of(context).pop();
+    }
+  }
+
+  updateSpecializedField(Developer developer, String field) async {
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'accept': '*/*',
+    };
+    Developer dev = Developer(
+        developerName: developer.developerName,
+        developerImage: developer.developerImage,
+        developerSpecializedField: field,
+        createSocialMediaRequests: developer.createSocialMediaRequests);
+    var response = await http.post(
+      Uri.parse(
+          "https://aifitness-web.herokuapp.com/developer/updateDeveloperSpecializedField?developerId=${developer.id.toString()}"),
+      headers: requestHeaders,
+      body: json.encode(dev),
+    );
+    if (response.statusCode == 200) {
+      print("Updated Successfully");
+      nameController.clear();
+      Navigator.of(context).pop();
+    }
   }
 
   Future<List<Developer>> fetchDevelopers() async {
     Map<String, String> requestHeaders = {
       'accept': '*/*',
     };
-    try {
-      final response = await http.get(
-          Uri.parse("https://aifitness-web.herokuapp.com/developer/getall"),
-          headers: requestHeaders);
-      //print(response.);
+    List<Developer> _listDeveloper = [];
+    final response = await http.get(
+        Uri.parse("https://aifitness-web.herokuapp.com/developer/getall"),
+        headers: requestHeaders);
+    //print(response.body);
+    // setState(() {
+    _listDeveloper = List<Developer>.from(
+        json.decode(response.body).map((data) => Developer.fromJson(data)));
+    // });
 
-      // list = List<Developer>.from(
-      //     response.body.map((data) => Developer.fromJson(data)));
-
-      // var data1 = json.encode(response.body);
-      // list = List<Developer>.from(
-      //     json.decode(data1).map((data) => Developer.fromJson(data)));
-      // for (var i = 0; i < list.length; i++) {
-      //   print(list.length);
-      // }
-
-      //  _createSo(){
-      //     CreateSocialMediaRequest createReq = CreateSocialMediaRequest(
-      //     link: "",
-      //     developerId: 17,
-      //     socialMedia: "LINKEDIN",
-      //     );
-      //   }
-      // list = json
-      //     .decode(response.body)
-      //     .map((data) => Developer.fromJson(data ?? ' '))
-      //     .toList();
-
-      // var jsonData = developerFromJson(response.body) as List<Developer>;
-      // Developer dev = Developer(
-      //     developerName: jsonData[0].developerName,
-      //     developerImage: "a",
-      //     developerSpecializedField: jsonData[0].developerSpecializedField,
-      //     createSocialMediaRequests: jsonData[0].createSocialMediaRequests);
-      // list.add(dev);
-
-    } catch (e) {
-      debugPrint(e.toString());
+    if (response.statusCode == 200) {
+      //print(list);
+      print("-----");
+    } else {
+      print("eruurru");
     }
 
-    return list;
+    return _listDeveloper;
+  }
+
+  deleteDeveloper(Developer developer) async {
+    Map<String, String> requestHeaders = {
+      'accept': '*/*',
+    };
+    final http.Response response = await http.post(
+      Uri.parse(
+          "https://aifitness-web.herokuapp.com/developer/deleteDeveloper?developerId=${developer.id.toString()}"),
+      headers: requestHeaders,
+    );
+    if (response.statusCode == 200) {
+      print("Deleted");
+    } else {
+      throw Exception('Failed to delete page.');
+    }
   }
 }
