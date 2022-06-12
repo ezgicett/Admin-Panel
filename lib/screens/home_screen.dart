@@ -4,6 +4,7 @@ import 'package:bitirme_admin_panel/screens/carousel_screen_operations.dart';
 import 'package:bitirme_admin_panel/screens/dashboard_screen.dart';
 import 'package:bitirme_admin_panel/screens/developer_screen.dart';
 import 'package:bitirme_admin_panel/screens/developer_screen_operations.dart';
+import 'package:bitirme_admin_panel/screens/login_screen.dart';
 import 'package:bitirme_admin_panel/screens/navbar_screen.dart';
 import 'package:bitirme_admin_panel/screens/welcome_screen_operations.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +78,16 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Center(
           child: Text("Admin Panel"),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => LoginScreen()));
+            },
+          ),
+        ],
       ),
       sideBar: SideBar(
         items: const [

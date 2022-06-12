@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
         title: Text("Login Page"),
       ),
       body: SingleChildScrollView(
+        // centera al
         child: Form(
           autovalidateMode:
               AutovalidateMode.always, //check for validation while typing
@@ -77,26 +78,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     //validatePassword,        //Function to check validation
                     ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  //TODO FORGOT PASSWORD SCREEN GOES HERE
-                },
-                child: Text(
-                  'Forgot Password',
-                  style: TextStyle(color: Colors.blue, fontSize: 15),
-                ),
+              SizedBox(
+                height: 20,
               ),
               Container(
-                height: 50,
+                height: 30,
                 width: 250,
                 decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(20)),
                 child: ElevatedButton(
                   onPressed: () {
-                    login();
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: (_) => HomeScreen()));
+                    //login();
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => HomeScreen()));
 
                     // if (formkey.currentState!.validate()) {
                     //   Navigator.push(context,
@@ -106,16 +101,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     //   print("Not Validated");
                     // }
                   },
-                  child: Text(
+                  child: const Text(
                     'Login',
                     style: TextStyle(color: Colors.white, fontSize: 25),
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 100,
               ),
-              Text('New User? Create Account')
             ],
           ),
         ),
