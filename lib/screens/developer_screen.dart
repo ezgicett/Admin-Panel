@@ -1,11 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:bitirme_admin_panel/models/developer.dart';
 import 'package:bitirme_admin_panel/widgets/customized_widgets/pick_image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_for_web/image_picker_for_web.dart';
 import 'package:http/http.dart' as http;
 
 class DeveloperScreen extends StatefulWidget {
@@ -16,9 +12,7 @@ class DeveloperScreen extends StatefulWidget {
 }
 
 class _DeveloperScreenState extends State<DeveloperScreen> {
-  File? image;
   bool flag = false;
-  String url = "sdad.png";
 
   TextEditingController nameController = TextEditingController();
   TextEditingController specializedFieldController = TextEditingController();
@@ -170,33 +164,22 @@ class _DeveloperScreenState extends State<DeveloperScreen> {
       'Content-type': 'application/json',
       'accept': '*/*',
     };
-    print(PickImage(flag: true).getBase64.length);
     Developer developer = Developer(
         developerName: nameController.text.toString(),
         developerImage: PickImage(flag: true).getBase64,
         developerSpecializedField: specializedFieldController.text.toString(),
         createSocialMediaRequests: listOfSocialMediaAccounts); // [
-    //   CreateSocialMediaRequest(
-    //     link: "",
-    //     developerId: 17,
-    //     socialMedia: "LINKEDIN",
-    //   )
-    // ]);
 
     var response = await http.post(
         Uri.parse("https://aifitness-web.herokuapp.com/developer/addDeveloper"),
         headers: requestHeaders,
         body: jsonEncode(developer.toJson()));
 
-    debugPrint(response.statusCode.toString());
-    //var result = developerFromJson(response.body);
-    //Developer developer = result;
-    //debugPrint(result.developerSpecializedField);
-
-    // Map<String, dynamic> jsonReuests = {
-    //   'link': "https://www.linkedin.com/in/ezgicetinkayaa/",
-    //   'developerId': 0,
-    //   'socialMedia': "LINKEDIN",
-    // };
+    nameController.clear();
+    gmailController.clear();
+    linkedinController.clear();
+    tweeterController.clear();
+    specializedFieldController.clear();
+    //debugPrint(response.statusCode.toString());
   }
 }

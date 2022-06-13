@@ -1,13 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:bitirme_admin_panel/models/carousel.dart';
 import 'package:bitirme_admin_panel/widgets/customized_widgets/pick_image.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_for_web/image_picker_for_web.dart';
-import 'package:path/path.dart' as Path;
 import 'package:http/http.dart' as http;
 
 class CarouselScreen extends StatefulWidget {
@@ -123,7 +118,24 @@ class _CarouselScreenState extends State<CarouselScreen> {
             ),
             ElevatedButton(
                 onPressed: () async {
-                  await createPage();
+                  if (titleController.text.isEmpty &&
+                      textController.text.isEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Create Failed'),
+                        content: const Text('Fill the empty forms!'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Okey'),
+                            child: const Text('Okey'),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    await createPage();
+                  }
                 },
                 child: const Text("Create")),
           ],
@@ -140,17 +152,18 @@ class _CarouselScreenState extends State<CarouselScreen> {
 
     Carousel page = Carousel(
       carouselIndex: selectedIndex,
-      leftSideImage: "aa", //PickImage(flag: true).getBase64,
+      leftSideImage: PickImage(flag: true).getBase64,
       rightSideTitle: titleController.text.toString(),
       rightSideText: textController.text.toString(),
     );
+
+    //clear controllers
+    titleController.clear();
+    textController.clear();
 
     var response = await http.post(
         Uri.parse("https://aifitness-web.herokuapp.com/carousel/create"),
         headers: requestHeaders,
         body: jsonEncode(page.toJson()));
-
-    debugPrint(response.statusCode.toString());
-    debugPrint(response.body);
   }
 }

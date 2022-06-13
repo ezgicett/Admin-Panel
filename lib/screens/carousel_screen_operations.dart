@@ -1,20 +1,11 @@
 import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
 
 import 'package:bitirme_admin_panel/models/carousel.dart';
-import 'package:bitirme_admin_panel/models/welcome_page.dart';
 import 'package:bitirme_admin_panel/screens/carousel_screen.dart';
 import 'package:bitirme_admin_panel/screens/home_screen.dart';
 import 'package:bitirme_admin_panel/screens/utils.dart';
-import 'package:bitirme_admin_panel/screens/welcome_screen.dart';
 import 'package:bitirme_admin_panel/widgets/scrollable_widget.dart';
-import 'package:bitirme_admin_panel/widgets/text_dialog_widget.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_for_web/image_picker_for_web.dart';
-import 'package:path/path.dart' as Path;
 import 'package:http/http.dart' as http;
 
 class CarouselScreenOperations extends StatefulWidget {
@@ -27,7 +18,6 @@ class CarouselScreenOperations extends StatefulWidget {
 
 class _CarouselScreenOperationsState extends State<CarouselScreenOperations> {
   late List<Carousel> screen;
-  //TextEditingController sloganController = TextEditingController();
 
   @override
   void initState() {
@@ -55,7 +45,7 @@ class _CarouselScreenOperationsState extends State<CarouselScreenOperations> {
               ),
             );
           }
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         });
@@ -75,7 +65,13 @@ class _CarouselScreenOperationsState extends State<CarouselScreenOperations> {
       final isAge = column == columns[2];
 
       return DataColumn(
-        label: Text(column),
+        label: Container(
+            width: 100,
+            child: Column(
+              children: [
+                Expanded(child: Text(column)),
+              ],
+            )),
         numeric: isAge,
       );
     }).toList();
@@ -103,15 +99,19 @@ class _CarouselScreenOperationsState extends State<CarouselScreenOperations> {
               });
             } else {
               return DataCell(
-                Text('$cell'),
+                Container(
+                    width: 100,
+                    child: Column(
+                      children: [
+                        Expanded(child: Text('$cell')),
+                      ],
+                    )),
+                //Text('$cell'),
                 showEditIcon: showEditIcon,
                 onTap: () {
                   switch (index) {
                     case 5:
-                      editLastName(screen);
-                      break;
-                    case 1:
-                      editFirstName(screen);
+                      editCarousel(screen);
                       break;
                   }
                 },
@@ -121,23 +121,13 @@ class _CarouselScreenOperationsState extends State<CarouselScreenOperations> {
         );
       }).toList();
 
-  Future editFirstName(Carousel page) async {
-    final firstName = await showTextDialog(
-      context,
-      slogan: 'Change Id',
-      slogan_value: page.id.toString(),
-    );
-  }
-
-  Future editLastName(Carousel selectedPage) async {
+  Future editCarousel(Carousel selectedPage) async {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => HomeScreen(
               selectedScreen: CarouselScreen(
                 selectedCarousel: selectedPage,
               ),
             )));
-    // Navigator.of(context).pushNamed(WelcomeScreen.id);
-    //Navigator.push(context, );
   }
 
   Future<List<Carousel>> fetchPages() async {
@@ -168,8 +158,6 @@ class _CarouselScreenOperationsState extends State<CarouselScreenOperations> {
       headers: requestHeaders,
     );
     if (response.statusCode == 200) {
-      //return WelcomePage.fromJson(jsonDecode(response.body));
-      //var result = welcomePageFromJson(response.body);
       setState(() {
         fetchPages();
       });

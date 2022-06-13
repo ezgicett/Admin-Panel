@@ -1,18 +1,12 @@
 import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
-
 import 'package:bitirme_admin_panel/models/welcome_page.dart';
 import 'package:bitirme_admin_panel/screens/home_screen.dart';
 import 'package:bitirme_admin_panel/screens/utils.dart';
 import 'package:bitirme_admin_panel/screens/welcome_screen.dart';
 import 'package:bitirme_admin_panel/widgets/scrollable_widget.dart';
 import 'package:bitirme_admin_panel/widgets/text_dialog_widget.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_for_web/image_picker_for_web.dart';
-import 'package:path/path.dart' as Path;
 import 'package:http/http.dart' as http;
 
 class WelcomeScreenOperations extends StatefulWidget {
@@ -25,8 +19,6 @@ class WelcomeScreenOperations extends StatefulWidget {
 }
 
 class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
-  XFile? _image;
-  String? imageUrl;
   bool flag = false;
   Color? color;
   int selectedIndex = -1;
@@ -60,14 +52,14 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
               ),
             );
           }
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         });
   }
 
   Widget buildDataTable() {
-    final columns = ['Id', 'Slogan', 'Image', '-'];
+    final columns = ['Id', 'Slogan', 'Image', 'Edit', '-'];
 
     return DataTable(
       columns: getColumns(columns),
@@ -80,7 +72,13 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
       final isAge = column == columns[2];
 
       return DataColumn(
-        label: Container(width: 50, child: Expanded(child: Text(column))),
+        label: Container(
+            width: 100,
+            child: Column(
+              children: [
+                Expanded(child: Text(column)),
+              ],
+            )),
         //label: Text(column),
         numeric: isAge,
       );
@@ -91,26 +89,34 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
       users.map((WelcomePage page) {
         Icon deleteIcon = Icon(Icons.delete);
         int length = 20;
-        final cells = [page.id, page.slogan, page.welcomePageImage, deleteIcon];
+        final cells = [
+          page.id,
+          page.slogan,
+          page.welcomePageImage,
+          ' ',
+          deleteIcon
+        ];
         return DataRow(
-          //Container(width: 100, child: Expanded(child: Text('$cell'))),
           cells: Utils.modelBuilder(cells, (index, cell) {
-            final showEditIcon = index == 1 || index == 3;
+            final showEditIcon = index == 3;
             if (cell.runtimeType == Icon) {
               return DataCell(Icon(Icons.delete), onTap: () {
                 deletePage(page);
               });
             } else {
               return DataCell(
-                Text('$cell'),
+                Container(
+                    width: 100,
+                    child: Column(
+                      children: [
+                        Expanded(child: Text('$cell')),
+                      ],
+                    )),
                 showEditIcon: showEditIcon,
                 onTap: () {
                   switch (index) {
                     case 3:
-                      editLastName(page);
-                      break;
-                    case 1:
-                      editFirstName(page);
+                      editPage(page);
                       break;
                   }
                 },
@@ -120,23 +126,21 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
         );
       }).toList();
 
-  Future editFirstName(WelcomePage page) async {
-    final firstName = await showTextDialog(
-      context,
-      slogan: 'Change Id',
-      slogan_value: page.id.toString(),
-    );
-  }
+  // Future editPage(WelcomePage page) async {
+  //   final firstName = await showTextDialog(
+  //     context,
+  //     slogan: 'Change Id',
+  //     slogan_value: page.id.toString(),
+  //   );
+  // }
 
-  Future editLastName(WelcomePage selectedPage) async {
+  Future editPage(WelcomePage selectedPage) async {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => HomeScreen(
               selectedScreen: WelcomeScreen(
                 selectedPage: selectedPage,
               ),
             )));
-    // Navigator.of(context).pushNamed(WelcomeScreen.id);
-    //Navigator.push(context, );
   }
 
   Future<List<WelcomePage>> fetchPages() async {
@@ -150,7 +154,6 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
       WelcomeScreenOperations.allPages = List<WelcomePage>.from(
           json.decode(response.body).map((data) => WelcomePage.fromJson(data)));
       WelcomeScreenOperations.allPages.forEach((element) {
-        //print(element.id);
       });
     } catch (e) {
       debugPrint(e.toString());
@@ -169,8 +172,6 @@ class _WelcomeScreenOperationsState extends State<WelcomeScreenOperations> {
       headers: requestHeaders,
     );
     if (response.statusCode == 200) {
-      //return WelcomePage.fromJson(jsonDecode(response.body));
-      //var result = welcomePageFromJson(response.body);
       setState(() {
         fetchPages();
       });

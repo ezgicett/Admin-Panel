@@ -1,19 +1,11 @@
 import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
-
 import 'package:bitirme_admin_panel/models/developer.dart';
-import 'package:bitirme_admin_panel/models/welcome_page.dart';
 import 'package:bitirme_admin_panel/screens/home_screen.dart';
 import 'package:bitirme_admin_panel/screens/utils.dart';
 import 'package:bitirme_admin_panel/screens/welcome_screen.dart';
 import 'package:bitirme_admin_panel/widgets/scrollable_widget.dart';
-import 'package:bitirme_admin_panel/widgets/text_dialog_widget.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_for_web/image_picker_for_web.dart';
-import 'package:path/path.dart' as Path;
 import 'package:http/http.dart' as http;
 
 class DeveloperScreenOperations extends StatefulWidget {
@@ -39,7 +31,6 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
   void initState() {
     super.initState();
     fetchDevelopers();
-    //print(list);
   }
 
   @override
@@ -62,8 +53,8 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
               ),
             );
           }
-          print("Data buluanmadı ${snapshot.error.toString()}");
-          return Center(
+          //print("Data buluanmadı ${snapshot.error.toString()}");
+          return const Center(
             child: CircularProgressIndicator(),
           );
         });
@@ -95,7 +86,13 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
       final isAge = column == columns[2];
 
       return DataColumn(
-        label: Container(width: 100, child: Expanded(child: Text(column))),
+        label: Container(
+            width: 100,
+            child: Column(
+              children: [
+                Expanded(child: Text(column)),
+              ],
+            )),
         numeric: isAge,
       );
     }).toList();
@@ -105,7 +102,6 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
       developers.map((Developer developer) {
         //print(page.createSocialMediaRequests![0].link);
         int listLength = (developer.createSocialMediaRequests?.length ?? 0);
-        print(listLength);
         Icon deleteIcon = Icon(Icons.delete);
         final cells = [
           developer.id,
@@ -137,7 +133,13 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
               });
             } else {
               return DataCell(
-                Container(width: 100, child: Expanded(child: Text('$cell'))),
+                Container(
+                    width: 100,
+                    child: Column(
+                      children: [
+                        Expanded(child: Text('$cell')),
+                      ],
+                    )),
                 showEditIcon: showEditIcon,
                 onTap: () {
                   switch (index) {
@@ -208,7 +210,7 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
     final name = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Update Social Media"),
+        title: const Text("Update Social Media"),
         content: TextField(
           controller: nameController,
           decoration: InputDecoration(hintText: 'Enter link'),
@@ -218,7 +220,7 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
               onPressed: () {
                 updateGmail(developer, nameController.text);
               },
-              child: Text('SUBMIT')),
+              child: const Text('SUBMIT')),
         ],
       ),
     );
@@ -250,6 +252,9 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
     if (response.statusCode == 200) {
       print("Updated Successfully");
       nameController.clear();
+      setState(() {
+        fetchDevelopers();
+      });
       Navigator.of(context).pop();
     }
   }
@@ -261,8 +266,6 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
     };
     final index = developer.createSocialMediaRequests!
         .indexWhere((element) => element.socialMedia == "LINKEDIN");
-
-    print(index.toString() + "----");
 
     var response = await http.post(
       Uri.parse(
@@ -299,6 +302,9 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
     if (response.statusCode == 200) {
       print("Updated Successfully");
       nameController.clear();
+      setState(() {
+        fetchDevelopers();
+      });
       Navigator.of(context).pop();
     }
   }
@@ -311,18 +317,9 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
     final response = await http.get(
         Uri.parse("https://aifitness-web.herokuapp.com/developer/getall"),
         headers: requestHeaders);
-    //print(response.body);
-    // setState(() {
+
     _listDeveloper = List<Developer>.from(
         json.decode(response.body).map((data) => Developer.fromJson(data)));
-    // });
-
-    if (response.statusCode == 200) {
-      //print(list);
-      print("-----");
-    } else {
-      print("eruurru");
-    }
 
     return _listDeveloper;
   }
@@ -338,6 +335,9 @@ class _DeveloperScreenOperationsState extends State<DeveloperScreenOperations> {
     );
     if (response.statusCode == 200) {
       print("Deleted");
+      setState(() {
+        fetchDevelopers();
+      });
     } else {
       throw Exception('Failed to delete page.');
     }

@@ -1,20 +1,14 @@
 import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
 import 'package:bitirme_admin_panel/models/welcome_page.dart';
 import 'package:bitirme_admin_panel/widgets/customized_widgets/pick_image.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_for_web/image_picker_for_web.dart';
-import 'package:path/path.dart' as Path;
 import 'package:http/http.dart' as http;
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome-screen';
+
   static List<WelcomePage> pages = [];
   WelcomePage? selectedPage;
-  //final WelcomePage? selectedPage;
   WelcomeScreen({Key? key, this.selectedPage}) : super(key: key);
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -22,7 +16,6 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   bool flag = false;
-  Color? color;
   int selectedIndex = -1;
   TextEditingController sloganController = TextEditingController();
   bool isUpdate = false;
@@ -78,12 +71,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: isUpdate == false
                     ? const Text("Create")
                     : const Text("Update")),
-
-            // ElevatedButton(
-            //     onPressed: () {
-            //       debugPrint(widget.selectedPage!.id.toString());
-            //     },
-            //     child: const Text("OO")),
           ],
         ),
       ),
@@ -104,9 +91,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         'welcomePageImage': PickImage(flag: true).getBase64,
       }),
     );
+    sloganController.clear();
     var result = welcomePageFromJson(response.body);
     WelcomePage welcomePage = result;
-    //debugPrint(result.id.toString());
   }
 
   updateWelcomePage() async {
